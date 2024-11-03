@@ -17,3 +17,7 @@ func (p *Package) Child(name string) *Package {
 		Module: p.Module,
 	}
 }
+
+func (p *Package) Equal(that *Package) bool {
+	return p.Module.Module.Mod.Path == that.Module.Module.Mod.Path && p.ModuleRelativePath == that.ModuleRelativePath
+}
