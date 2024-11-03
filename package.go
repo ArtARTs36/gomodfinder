@@ -21,3 +21,7 @@ func (p *Package) Child(name string) *Package {
 func (p *Package) Equal(that *Package) bool {
 	return p.Module.Module.Mod.Path == that.Module.Module.Mod.Path && p.ModuleRelativePath == that.ModuleRelativePath
 }
+
+func (p *Package) FullName() string {
+	return fmt.Sprintf("%s/%s", p.Module.Module.Mod.Path, p.ModuleRelativePath)
+}
