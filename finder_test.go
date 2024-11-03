@@ -1,7 +1,6 @@
 package gomodfinder
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,7 +11,10 @@ func TestFind(t *testing.T) {
 	t.Run("failed with 0 levels", func(t *testing.T) {
 		_, err := Find("./", 0)
 
-		assert.Equal(t, fmt.Errorf("go mod file not found in: []"), err)
+		assert.Equal(t, &FileNotFoundError{
+			File:      "go.mod",
+			Locations: []string{},
+		}, err)
 	})
 
 	t.Run("success", func(t *testing.T) {

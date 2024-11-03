@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 )
 
-var ErrFileNotFound = fmt.Errorf("file not found")
-
 type Directory interface {
 	ReadFile(path string) ([]byte, error)
 	Parent() (Directory, error)
@@ -28,7 +26,10 @@ func NewOsDirectory(dir string) *OsDirectory {
 func (d *OsDirectory) ReadFile(path string) ([]byte, error) {
 	content, err := os.ReadFile(d.PathTo(path))
 	if errors.Is(err, os.ErrNotExist) {
-		return nil, ErrFileNotFound
+		return nil, &FileNotFoundError{
+			File:      path,
+			Locations: []string{d.dir},
+		}
 	}
 	return content, err
 }

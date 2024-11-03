@@ -28,17 +28,25 @@ func FindIn(dir Directory, levels int) (*ModFile, error) {
 		}
 
 		goModContent, err = currDir.ReadFile("go.mod")
-		if err != nil && errors.Is(err, ErrFileNotFound) {
-			scanned = append(scanned, currDir.Path())
+		if err != nil {
+			nfErr := &FileNotFoundError{}
+			if errors.As(err, &nfErr) {
+				scanned = append(scanned, currDir.Path())
 
-			continue
+				continue
+			}
+
+			return nil, fmt.Errorf("failed to read file: %w", err)
 		}
 
 		goModFound = true
 	}
 
 	if !goModFound {
-		return nil, fmt.Errorf("go mod file not found in: %v", scanned)
+		return nil, &FileNotFoundError{
+			File:      "go.mod",
+			Locations: scanned,
+		}
 	}
 
 	path, err := filepath.Abs(currDir.PathTo("go.mod"))
@@ -46,7 +54,7 @@ func FindIn(dir Directory, levels int) (*ModFile, error) {
 		return nil, fmt.Errorf("failed to get absoulte path: %w", err)
 	}
 
-	stdModFile, err := modfile.ParseLax(currDir.PathTo("go.mod"), goModContent, nil)
+	stdModFile, err := modfile.ParseLax(path, goModContent, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse go mod file: %w", err)
 	}
