@@ -3,15 +3,16 @@ package gomodfinder
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 
 	"golang.org/x/mod/modfile"
 )
 
-func Find(dir string, levels int) (*modfile.File, error) {
+func Find(dir string, levels int) (*ModFile, error) {
 	return FindIn(NewOsDirectory(dir), levels)
 }
 
-func FindIn(dir Directory, levels int) (*modfile.File, error) {
+func FindIn(dir Directory, levels int) (*ModFile, error) {
 	goModContent := []byte{}
 	goModFound := false
 
@@ -40,5 +41,18 @@ func FindIn(dir Directory, levels int) (*modfile.File, error) {
 		return nil, fmt.Errorf("go mod file not found in: %v", scanned)
 	}
 
-	return modfile.ParseLax(currDir.PathTo("go.mod"), goModContent, nil)
+	path, err := filepath.Abs(currDir.PathTo("go.mod"))
+	if err != nil {
+		return nil, fmt.Errorf("failed to get absoulte path: %w", err)
+	}
+
+	stdModFile, err := modfile.ParseLax(currDir.PathTo("go.mod"), goModContent, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse go mod file: %w", err)
+	}
+
+	return &ModFile{
+		File: stdModFile,
+		Path: path,
+	}, nil
 }
