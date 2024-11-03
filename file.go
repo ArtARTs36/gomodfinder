@@ -27,7 +27,7 @@ func (f *ModFile) CalcPackageFromAbsPath(pkgAbsPath string) *Package {
 func (f *ModFile) CalcPackageFromAbsPathWithName(pkgName string, pkgAbsPath string) *Package {
 	return &Package{
 		Name:               pkgName,
-		ModuleRelativePath: strings.TrimLeft(strings.TrimPrefix(pkgAbsPath, f.Path), `/\`),
+		ModuleRelativePath: strings.TrimLeft(strings.TrimPrefix(pkgAbsPath, f.Dir()), `/\`),
 		Module:             f,
 	}
 }

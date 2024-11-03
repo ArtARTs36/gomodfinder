@@ -8,7 +8,7 @@ import (
 
 func TestModFile_CalcPackageFromAbsPath(t *testing.T) {
 	mod := &ModFile{
-		Path: "/Users/artarts36/GolandProjects/gomodfinder",
+		Path: "/Users/artarts36/GolandProjects/gomodfinder/go.mod",
 	}
 
 	got := mod.CalcPackageFromAbsPath("/Users/artarts36/GolandProjects/gomodfinder/a/b/c/d")
