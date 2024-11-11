@@ -22,11 +22,6 @@ func FindIn(dir Directory, levels int) (*ModFile, error) {
 	for i := 0; i < levels; i++ {
 		var err error
 
-		currDir, err = currDir.Parent()
-		if err != nil {
-			return nil, fmt.Errorf("failed to get parent directory: %w", err)
-		}
-
 		goModContent, err = currDir.ReadFile("go.mod")
 		if err != nil {
 			nfErr := &FileNotFoundError{}
