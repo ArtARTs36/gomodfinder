@@ -28,6 +28,11 @@ func FindIn(dir Directory, levels int) (*ModFile, error) {
 			if errors.As(err, &nfErr) {
 				scanned = append(scanned, currDir.Path())
 
+				currDir, err = currDir.Parent()
+				if err != nil {
+					return nil, fmt.Errorf("failed to get parent directory: %w", err)
+				}
+
 				continue
 			}
 
